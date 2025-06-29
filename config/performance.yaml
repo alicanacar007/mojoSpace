@@ -1,0 +1,75 @@
+# MojoX Performance Configuration
+# Optimized for maximum throughput and minimal latency
+
+# I/O Configuration
+input_path: null
+output_path: null
+demo_mode: false
+verbose: false
+
+# Pipeline Control
+enable_frame_extraction: true
+enable_object_detection: true
+enable_nms: true
+enable_visualization: true
+enable_benchmarking: true
+
+# Frame Extraction Configuration (Optimized)
+frame_extraction:
+  target_fps: 60.0
+  max_width: 1920
+  max_height: 1080
+  channels: 3
+  batch_size: 16  # Larger batch for better GPU utilization
+  use_mojo_kernel: true
+
+# Model Configuration (Optimized)
+model:
+  model_path: null
+  model_type: "yolov10n"  # Fastest model variant
+  input_size: [640, 640]
+  num_classes: 80
+  conf_threshold: 0.4  # Higher threshold for fewer false positives
+  batch_size: 4  # Larger batch size
+  device: "cuda"
+  use_max_graph: true
+
+# NMS Configuration (Optimized)
+nms:
+  iou_threshold: 0.6  # Slightly higher for faster processing
+  score_threshold: 0.6  # Higher threshold
+  max_detections: 50  # Fewer detections for speed
+  use_mojo_kernel: true
+  parallel_threshold: 25  # Lower threshold for parallelization
+
+# Visualization Configuration (Minimal)
+visualization:
+  box_thickness: 1  # Thinner boxes
+  font_scale: 0.5  # Smaller font
+  font_thickness: 1
+  box_alpha: 0.2  # More transparent
+  text_alpha: 0.8
+  color_map: "coco"
+  save_format: "mp4"
+  fps: 60.0
+  quality: "medium"  # Balance quality vs speed
+
+# Benchmarking Configuration
+benchmark:
+  warmup_iterations: 20
+  benchmark_iterations: 200
+  measure_memory: true
+  measure_power: true
+  output_format: "json"
+  detailed_profiling: true
+
+# System Configuration (High Performance)
+system:
+  num_workers: 8  # More workers
+  prefetch_factor: 4  # More prefetching
+  pin_memory: true
+  persistent_workers: true
+  max_memory_usage: "16GB"  # More memory
+  enable_cuda: true
+  enable_tensorrt: true  # TensorRT optimization
+  enable_mixed_precision: true  # Mixed precision for speed 

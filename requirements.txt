@@ -1,0 +1,12 @@
+modular-sdk>=0.1.0
+torch>=2.0
+torchvision>=0.15
+max-graph-sdk>=0.1.0
+ffmpeg-python>=0.2.0
+pillow>=10.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+ultralytics>=8.0.0
+pytest>=7.0
+black>=23.0
+mypy>=1.0 

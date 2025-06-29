@@ -1,0 +1,80 @@
+{
+  "system_info": {
+    "platform": "Linux-6.8.0-52-generic-x86_64-with-glibc2.35",
+    "python_version": "3.11.13",
+    "cpu_count": 208,
+    "gpu_available": true,
+    "gpu_count": 1,
+    "gpu_name": "NVIDIA H100 80GB HBM3",
+    "gpu_memory": 85.029158912
+  },
+  "config": {
+    "frame_extraction": {
+      "target_fps": 30.0,
+      "use_mojo_kernel": true
+    },
+    "model": {
+      "device": "cuda",
+      "input_size": [
+        640,
+        640
+      ],
+      "use_max_graph": true
+    },
+    "nms": {
+      "use_mojo_kernel": true,
+      "iou_threshold": 0.5
+    }
+  },
+  "benchmarks": {
+    "frame_extraction": {
+      "total_time": 0.10925862200565462,
+      "avg_time_per_frame": 0.0010925862200565461,
+      "std_time_per_frame": 0.0010126714763081545,
+      "min_time": 0.000878037999427761,
+      "max_time": 0.009194344999741588,
+      "fps": 915.2595755310236
+    },
+    "inference": {
+      "total_time": 1.514892373008479,
+      "avg_time_per_batch": 0.01514892373008479,
+      "std_time_per_batch": 0.0008893171528232906,
+      "min_time": 0.013116691000504943,
+      "max_time": 0.017181382999297057,
+      "fps": 66.01129016275026
+    },
+    "nms": {
+      "10_detections": {
+        "avg_time": 2.3126399355533067e-06,
+        "std_time": 8.35494162475011e-07,
+        "min_time": 2.1299993022694252e-06,
+        "max_time": 8.079000508587342e-06
+      },
+      "50_detections": {
+        "avg_time": 2.658599987626076e-06,
+        "std_time": 8.674332572788495e-08,
+        "min_time": 2.587999915704131e-06,
+        "max_time": 3.1489998946199194e-06
+      },
+      "100_detections": {
+        "avg_time": 3.4407800376357046e-06,
+        "std_time": 2.1465291230453645e-06,
+        "min_time": 3.0350001907208934e-06,
+        "max_time": 1.8263000129081775e-05
+      },
+      "500_detections": {
+        "avg_time": 6.69811999614467e-05,
+        "std_time": 0.00037765114216494757,
+        "min_time": 1.281000004382804e-05,
+        "max_time": 0.0026839529991775635
+      }
+    },
+    "end_to_end": {
+      "total_frames": 10,
+      "total_time": 0.2027583122253418,
+      "avg_fps": 49.31980292322707,
+      "avg_inference_time": 0,
+      "avg_nms_time": 0
+    }
+  }
+}

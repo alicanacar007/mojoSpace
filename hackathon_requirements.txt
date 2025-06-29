@@ -1,0 +1,43 @@
+# MojoX Hackathon Requirements
+# Essential packages for real-time video object detection
+
+# Core ML & AI Stack
+torch>=2.0.0
+torchvision>=0.15.0
+ultralytics>=8.0.0
+numpy>=1.24.0
+
+# Computer Vision & Image Processing
+opencv-python>=4.8.0
+pillow>=10.0.0
+
+# Video Processing
+ffmpeg-python>=0.2.0
+
+# Modular AI Integration
+modular-sdk>=0.1.0
+max-graph-sdk>=0.1.0
+
+# GPU Acceleration (for H100 GPUs)
+cupy-cuda12x>=12.0.0
+numba>=0.57.0
+
+# Configuration & Utilities
+pyyaml>=6.0
+tqdm>=4.64.0
+psutil>=5.9.0
+click>=8.1.0
+
+# Visualization & Output
+matplotlib>=3.7.0
+rich>=13.0.0
+
+# Development Tools
+pytest>=7.0.0
+black>=23.0.0
+mypy>=1.0.0
+
+# Optional: Web demo interface
+streamlit>=1.25.0
+fastapi>=0.100.0
+uvicorn>=0.22.0 

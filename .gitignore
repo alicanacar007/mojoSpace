@@ -1,0 +1,162 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# pixi environments
+.pixi
+*.egg-info
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# Environments
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# AI/ML specific
+# Model files (too large for git)
+*.pt
+*.pth
+*.onnx
+*.pkl
+*.joblib
+*.h5
+*.hdf5
+# Keep small demo model
+!yolov10n.pt
+
+# Data directories
+data/
+dataset/
+datasets/
+training_data/
+
+# Result directories (generated content)
+results/
+output/
+logs/
+runs/
+tensorboard_logs/
+
+# Video files (too large)
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.flv
+# Keep small demo videos
+!demos/*.mp4
+
+# Image files in results (generated)
+results/**/*.jpg
+results/**/*.jpeg
+results/**/*.png
+output/**/*.jpg
+output/**/*.jpeg
+output/**/*.png
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Docker
+.dockerignore
+
+# Large files
+*.tar.gz
+*.zip
+*.rar
+
+# CUDA
+*.cubin
+*.fatbin
+
+# Mojo cache
+__mojocache__/
+.mojo/
+
+# Configuration files with secrets
+config/secrets.yaml
+config/private.yaml
+.secrets
+
+# Benchmark results (can be large)
+benchmark/results/
+benchmark/output/

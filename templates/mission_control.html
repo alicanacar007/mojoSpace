@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MojoX Mission Control - Object Detection Command Center</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Roboto+Mono:wght@300;400;500&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: #0a0e1a;
+            color: #00d4ff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 157, 0.03) 0%, transparent 50%),
+                linear-gradient(180deg, #0a0e1a 0%, #1a1f2e 100%);
+        }
+        
+        .mission-control-header {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 255, 157, 0.1) 100%);
+            border-bottom: 2px solid #00d4ff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            position: relative;
+        }
+        
+        .mission-control-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00d4ff, #00ff9d, #00d4ff, transparent);
+            animation: scanline 3s infinite;
+        }
+        
+        @keyframes scanline {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .mission-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            text-shadow: 0 0 20px #00d4ff;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { text-shadow: 0 0 20px #00d4ff; }
+            50% { text-shadow: 0 0 30px #00d4ff, 0 0 40px #00ff9d; }
+        }
+        
+        .mission-title {
+            font-size: 1.2rem;
+            color: #00ff9d;
+            font-weight: 500;
+        }
+        
+        .system-status {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff9d;
+            animation: blink 1.5s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 350px;
+            grid-template-rows: 400px 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            height: calc(100vh - 100px);
+        }
+        
+        .video-feed {
+            background: #1a1f2e;
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            padding: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .video-feed::before {
+            content: 'LIVE FEED';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ff3366;
+            color: white;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            animation: record-blink 1s infinite;
+            z-index: 10;
+        }
+        
+        @keyframes record-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .video-feed h3 {
+            color: #00ff9d;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .video-placeholder {
+            width: 100%;
+            height: 80%;
+            background: #0a0e1a;
+            border: 1px dashed #00d4ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        .video-placeholder::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            animation: scan 3s infinite;
+        }
+        
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .telemetry-panel {
+            background: #1a1f2e;
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            padding: 1rem;
+            grid-row: 1 / 3;
+        }
+        
+        .telemetry-header {
+            color: #00ff9d;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid #00d4ff;
+            padding-bottom: 0.5rem;
+        }
+        
+        .telemetry-data {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .telemetry-item {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 5px;
+            padding: 0.8rem;
+        }
+        
+        .telemetry-label {
+            font-size: 0.8rem;
+            color: #00ff9d;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+        
+        .telemetry-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00d4ff;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        .telemetry-unit {
+            font-size: 0.9rem;
+            color: #666;
+            margin-left: 0.3rem;
+        }
+        
+        .control-panel {
+            background: #1a1f2e;
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .control-section {
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 5px;
+            padding: 1rem;
+            background: rgba(0, 212, 255, 0.03);
+        }
+        
+        .control-title {
+            color: #00ff9d;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .control-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+        
+        .control-button {
+            background: linear-gradient(135deg, #1a1f2e, #2a3441);
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            padding: 0.8rem;
+            border-radius: 5px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+        
+        .control-button:hover {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: #0a0e1a;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .control-button.active {
+            background: linear-gradient(135deg, #00ff9d, #00d4ff);
+            color: #0a0e1a;
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.5);
+        }
+        
+        .ai-assistant {
+            background: #1a1f2e;
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            height: 300px;
+        }
+        
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .ai-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: #0a0e1a;
+        }
+        
+        .ai-title {
+            color: #00ff9d;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .ai-chat {
+            flex: 1;
+            background: rgba(0, 212, 255, 0.03);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 5px;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            overflow-y: auto;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.85rem;
+        }
+        
+        .ai-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .ai-input input {
+            flex: 1;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid #00d4ff;
+            border-radius: 5px;
+            padding: 0.6rem;
+            color: #00d4ff;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.85rem;
+        }
+        
+        .ai-input input:focus {
+            outline: none;
+            border-color: #00ff9d;
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+        }
+        
+        .ai-send {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            border: none;
+            color: #0a0e1a;
+            padding: 0.6rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .gpu-monitor {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 5px;
+            padding: 0.8rem;
+            margin-top: 1rem;
+        }
+        
+        .gpu-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .gpu-logo {
+            color: #76b900;
+            font-weight: 700;
+        }
+        
+        .gpu-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.8rem;
+        }
+        
+        .gpu-stat {
+            color: #00d4ff;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 212, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.3rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            transition: width 0.3s ease;
+        }
+        
+        .file-upload {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px dashed #00d4ff;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload:hover {
+            border-color: #00ff9d;
+            background: rgba(0, 255, 157, 0.05);
+        }
+        
+        .file-upload.dragover {
+            border-color: #00ff9d;
+            background: rgba(0, 255, 157, 0.1);
+            transform: scale(1.02);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: #00d4ff;
+            margin-bottom: 1rem;
+        }
+        
+        .processing-indicator {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            color: #00ff9d;
+        }
+        
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0, 255, 157, 0.3);
+            border-top: 2px solid #00ff9d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            border-left: 4px solid;
+        }
+        
+        .alert-success {
+            background: rgba(0, 255, 157, 0.1);
+            border-color: #00ff9d;
+            color: #00ff9d;
+        }
+        
+        .alert-error {
+            background: rgba(255, 51, 102, 0.1);
+            border-color: #ff3366;
+            color: #ff3366;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: 400px 400px 400px;
+            }
+            
+            .telemetry-panel {
+                grid-row: 3;
+                grid-column: 1 / 3;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(4, 350px);
+            }
+            
+            .telemetry-panel {
+                grid-row: 4;
+                grid-column: 1;
+            }
+            
+            .mission-control-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .system-status {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mission Control Header -->
+    <header class="mission-control-header">
+        <div class="logo-section">
+            <div class="mission-logo">🚀 MOJOX</div>
+            <div>
+                <div class="mission-title">Object Detection Command Center</div>
+                <div style="font-size: 0.8rem; color: #666;">Real-Time Video Analysis with Mojo Kernels</div>
+            </div>
+        </div>
+        
+        <div class="system-status">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>GPU ONLINE</span>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>MOJO ACTIVE</span>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>SYSTEM READY</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Control Grid -->
+    <div class="main-grid">
+        <!-- Primary Video Feed -->
+        <div class="video-feed">
+            <h3>Primary Camera Feed</h3>
+            <div class="video-placeholder" id="primaryFeed">
+                <div>📹 Awaiting Video Input</div>
+            </div>
+        </div>
+
+        <!-- Secondary Video Feed -->
+        <div class="video-feed">
+            <h3>Processed Output</h3>
+            <div class="video-placeholder" id="processedFeed">
+                <div>🎯 Object Detection Output</div>
+            </div>
+        </div>
+
+        <!-- Telemetry Panel -->
+        <div class="telemetry-panel">
+            <div class="telemetry-header">System Telemetry</div>
+            
+            <div class="telemetry-data">
+                <div class="telemetry-item">
+                    <div class="telemetry-label">Processing Speed</div>
+                    <div class="telemetry-value">
+                        <span id="fps">0</span><span class="telemetry-unit">FPS</span>
+                    </div>
+                </div>
+                
+                <div class="telemetry-item">
+                    <div class="telemetry-label">Objects Detected</div>
+                    <div class="telemetry-value">
+                        <span id="objects">0</span><span class="telemetry-unit">TOTAL</span>
+                    </div>
+                </div>
+                
+                <div class="telemetry-item">
+                    <div class="telemetry-label">Confidence</div>
+                    <div class="telemetry-value">
+                        <span id="confidence">85.2</span><span class="telemetry-unit">%</span>
+                    </div>
+                </div>
+                
+                <div class="telemetry-item">
+                    <div class="telemetry-label">Processing Time</div>
+                    <div class="telemetry-value">
+                        <span id="processTime">12.5</span><span class="telemetry-unit">MS</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- GPU Monitor -->
+            <div class="gpu-monitor">
+                <div class="gpu-header">
+                    <span class="gpu-logo">NVIDIA</span>
+                    <span style="color: #00d4ff;">GPU Profiler</span>
+                </div>
+                <div class="gpu-stats">
+                    <div class="gpu-stat">
+                        Memory: <span id="gpuMemory">6.2</span> GB
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 62%"></div>
+                        </div>
+                    </div>
+                    <div class="gpu-stat">
+                        Utilization: <span id="gpuUtil">78</span>%
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 78%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <!-- File Upload -->
+            <div class="file-upload" id="fileUpload">
+                <div class="upload-icon">📁</div>
+                <div>Drop video file here or click to browse</div>
+                <input type="file" id="fileInput" accept="video/*" style="display: none;">
+            </div>
+            
+            <div class="processing-indicator" id="processingIndicator">
+                <div class="spinner"></div>
+                <span>Processing video...</span>
+            </div>
+            
+            <!-- Processing Controls -->
+            <div class="control-section">
+                <div class="control-title">Processing Mode</div>
+                <div class="control-grid">
+                    <button class="control-button active" data-mode="realtime">Real-Time</button>
+                    <button class="control-button" data-mode="batch">Batch</button>
+                    <button class="control-button" data-mode="demo">Demo</button>
+                    <button class="control-button" data-mode="benchmark">Benchmark</button>
+                </div>
+            </div>
+            
+            <!-- Detection Settings -->
+            <div class="control-section">
+                <div class="control-title">Detection Settings</div>
+                <div style="margin-bottom: 0.8rem;">
+                    <label style="color: #00ff9d; font-size: 0.8rem;">Confidence Threshold</label>
+                    <input type="range" id="confidenceSlider" min="0" max="100" value="25" 
+                           style="width: 100%; margin-top: 0.3rem;">
+                    <span id="confidenceValue" style="color: #00d4ff; font-size: 0.8rem;">0.25</span>
+                </div>
+                <div>
+                    <label style="color: #00ff9d; font-size: 0.8rem;">IoU Threshold</label>
+                    <input type="range" id="iouSlider" min="0" max="100" value="45"
+                           style="width: 100%; margin-top: 0.3rem;">
+                    <span id="iouValue" style="color: #00d4ff; font-size: 0.8rem;">0.45</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Assistant -->
+        <div class="ai-assistant">
+            <div class="ai-header">
+                <div class="ai-avatar">🤖</div>
+                <div class="ai-title">AI Assistant</div>
+            </div>
+            
+            <div class="ai-chat" id="aiChat">
+                <div style="color: #00ff9d;">System ready. How can I assist with object detection?</div>
+            </div>
+            
+            <div class="ai-input">
+                <input type="text" id="aiInput" placeholder="Type a message...">
+                <button class="ai-send" onclick="sendAIMessage()">→</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize system
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFileUpload();
+            setupControls();
+            startTelemetryUpdates();
+            setupWebSocket();
+        });
+
+        // File upload handling
+        function setupFileUpload() {
+            const fileUpload = document.getElementById('fileUpload');
+            const fileInput = document.getElementById('fileInput');
+
+            fileUpload.addEventListener('click', () => fileInput.click());
+            
+            fileUpload.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUpload.classList.add('dragover');
+            });
+            
+            fileUpload.addEventListener('dragleave', () => {
+                fileUpload.classList.remove('dragover');
+            });
+            
+            fileUpload.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUpload.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileUpload(files[0]);
+                }
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files[0]);
+                }
+            });
+        }
+
+        // Control button handling
+        function setupControls() {
+            const buttons = document.querySelectorAll('.control-button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons in the same section
+                    const section = this.closest('.control-section');
+                    section.querySelectorAll('.control-button').forEach(btn => 
+                        btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Handle mode change
+                    const mode = this.dataset.mode;
+                    if (mode) {
+                        handleModeChange(mode);
+                    }
+                });
+            });
+
+            // Slider updates
+            const confidenceSlider = document.getElementById('confidenceSlider');
+            const iouSlider = document.getElementById('iouSlider');
+            
+            confidenceSlider.addEventListener('input', function() {
+                document.getElementById('confidenceValue').textContent = 
+                    (this.value / 100).toFixed(2);
+            });
+            
+            iouSlider.addEventListener('input', function() {
+                document.getElementById('iouValue').textContent = 
+                    (this.value / 100).toFixed(2);
+            });
+        }
+
+        // File upload processing
+        async function handleFileUpload(file) {
+            const processingIndicator = document.getElementById('processingIndicator');
+            processingIndicator.style.display = 'flex';
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('confidence_threshold', 
+                document.getElementById('confidenceSlider').value / 100);
+            formData.append('iou_threshold', 
+                document.getElementById('iouSlider').value / 100);
+            formData.append('device', 'cuda');
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('Video uploaded successfully! Processing...', 'success');
+                    monitorJob(result.job_id);
+                } else {
+                    showAlert('Upload failed: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Upload error: ' + error.message, 'error');
+            } finally {
+                processingIndicator.style.display = 'none';
+            }
+        }
+
+        // Job monitoring
+        async function monitorJob(jobId) {
+            const interval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/jobs/${jobId}`);
+                    const job = await response.json();
+                    
+                    updateTelemetry(job);
+                    
+                    if (job.status === 'completed') {
+                        clearInterval(interval);
+                        showAlert('Processing completed!', 'success');
+                        // Load result video
+                        if (job.output_path) {
+                            loadProcessedVideo(job.output_path);
+                        }
+                    } else if (job.status === 'failed') {
+                        clearInterval(interval);
+                        showAlert('Processing failed: ' + job.error, 'error');
+                    }
+                } catch (error) {
+                    console.error('Job monitoring error:', error);
+                }
+            }, 1000);
+        }
+
+        // Mode change handling
+        function handleModeChange(mode) {
+            addAIMessage(`Switching to ${mode} mode...`, 'ai');
+            
+            switch(mode) {
+                case 'realtime':
+                    // Initialize real-time processing
+                    break;
+                case 'batch':
+                    // Setup batch processing
+                    break;
+                case 'demo':
+                    // Load demo video
+                    loadDemoVideo();
+                    break;
+                case 'benchmark':
+                    // Start benchmark
+                    runBenchmark();
+                    break;
+            }
+        }
+
+        // Demo video loading
+        async function loadDemoVideo() {
+            try {
+                const response = await fetch('/demos');
+                const data = await response.json();
+                
+                if (data.demos.length > 0) {
+                    const demoVideo = data.demos[0];
+                    addAIMessage(`Loading demo: ${demoVideo.name}`, 'ai');
+                    
+                    // Process demo video
+                    const formData = new FormData();
+                    formData.append('demo_video', demoVideo.name);
+                    formData.append('confidence_threshold', 0.25);
+                    formData.append('device', 'cuda');
+                    
+                    const processResponse = await fetch('/process_demo', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await processResponse.json();
+                    if (result.success) {
+                        monitorJob(result.job_id);
+                    }
+                }
+            } catch (error) {
+                addAIMessage('Demo loading failed: ' + error.message, 'error');
+            }
+        }
+
+        // Benchmark runner
+        async function runBenchmark() {
+            addAIMessage('Starting performance benchmark...', 'ai');
+            
+            try {
+                const response = await fetch('/benchmark', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        iterations: 100,
+                        warmup: 10,
+                        device: 'cuda'
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    monitorJob(result.job_id);
+                }
+            } catch (error) {
+                addAIMessage('Benchmark failed: ' + error.message, 'error');
+            }
+        }
+
+        // Telemetry updates
+        function startTelemetryUpdates() {
+            // Simulate real-time telemetry
+            setInterval(() => {
+                updateRandomTelemetry();
+            }, 2000);
+        }
+
+        function updateRandomTelemetry() {
+            // Simulate changing values
+            const fps = (Math.random() * 10 + 25).toFixed(1);
+            const objects = Math.floor(Math.random() * 20);
+            const confidence = (Math.random() * 15 + 80).toFixed(1);
+            const processTime = (Math.random() * 10 + 8).toFixed(1);
+            
+            document.getElementById('fps').textContent = fps;
+            document.getElementById('objects').textContent = objects;
+            document.getElementById('confidence').textContent = confidence;
+            document.getElementById('processTime').textContent = processTime;
+            
+            // Update GPU stats
+            const gpuMemory = (Math.random() * 2 + 5).toFixed(1);
+            const gpuUtil = Math.floor(Math.random() * 20 + 60);
+            
+            document.getElementById('gpuMemory').textContent = gpuMemory;
+            document.getElementById('gpuUtil').textContent = gpuUtil;
+        }
+
+        function updateTelemetry(jobData) {
+            if (jobData.stats) {
+                if (jobData.stats.fps) {
+                    document.getElementById('fps').textContent = jobData.stats.fps.toFixed(1);
+                }
+                if (jobData.stats.objects) {
+                    document.getElementById('objects').textContent = jobData.stats.objects;
+                }
+                if (jobData.stats.confidence) {
+                    document.getElementById('confidence').textContent = 
+                        (jobData.stats.confidence * 100).toFixed(1);
+                }
+                if (jobData.stats.process_time) {
+                    document.getElementById('processTime').textContent = 
+                        (jobData.stats.process_time * 1000).toFixed(1);
+                }
+            }
+        }
+
+        // AI Assistant
+        function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addAIMessage(message, 'user');
+                input.value = '';
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const responses = [
+                        'Processing your request...',
+                        'Analyzing video parameters...',
+                        'Optimizing detection settings...',
+                        'System performance is optimal.',
+                        'Detection confidence increased.',
+                        'GPU utilization at 78%.'
+                    ];
+                    const response = responses[Math.floor(Math.random() * responses.length)];
+                    addAIMessage(response, 'ai');
+                }, 1000);
+            }
+        }
+
+        function addAIMessage(message, sender) {
+            const chat = document.getElementById('aiChat');
+            const messageDiv = document.createElement('div');
+            messageDiv.style.marginBottom = '0.5rem';
+            
+            if (sender === 'user') {
+                messageDiv.style.color = '#00d4ff';
+                messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
+            } else if (sender === 'ai') {
+                messageDiv.style.color = '#00ff9d';
+                messageDiv.innerHTML = `<strong>AI:</strong> ${message}`;
+            } else {
+                messageDiv.style.color = '#ff3366';
+                messageDiv.innerHTML = `<strong>Error:</strong> ${message}`;
+            }
+            
+            chat.appendChild(messageDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        // WebSocket for real-time updates
+        function setupWebSocket() {
+            // WebSocket implementation would go here
+            // for real-time video streaming and updates
+        }
+
+        // Utility functions
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        function loadProcessedVideo(videoPath) {
+            const processedFeed = document.getElementById('processedFeed');
+            processedFeed.innerHTML = `
+                <video width="100%" height="100%" controls autoplay muted>
+                    <source src="${videoPath}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            `;
+        }
+
+        // AI Input Enter key handling
+        document.getElementById('aiInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendAIMessage();
+            }
+        });
+    </script>
+</body>
+</html> 

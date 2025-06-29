@@ -1,0 +1,75 @@
+# MojoX Default Configuration
+# Real-Time Video Object Detection Pipeline
+
+# I/O Configuration
+input_path: null
+output_path: null
+demo_mode: false
+verbose: true
+
+# Pipeline Control
+enable_frame_extraction: true
+enable_object_detection: true
+enable_nms: true
+enable_visualization: true
+enable_benchmarking: false
+
+# Frame Extraction Configuration
+frame_extraction:
+  target_fps: 30.0
+  max_width: 1920
+  max_height: 1080
+  channels: 3
+  batch_size: 8
+  use_mojo_kernel: true
+
+# Model Configuration
+model:
+  model_path: null
+  model_type: "yolov10n"  # yolov10n, yolov10s, yolov10m, yolov10l, yolov10x
+  input_size: [640, 640]
+  num_classes: 80
+  conf_threshold: 0.25
+  batch_size: 1
+  device: "cuda"
+  use_max_graph: true
+
+# Non-Maximum Suppression Configuration
+nms:
+  iou_threshold: 0.5
+  score_threshold: 0.5
+  max_detections: 100
+  use_mojo_kernel: true
+  parallel_threshold: 50
+
+# Visualization Configuration
+visualization:
+  box_thickness: 2
+  font_scale: 0.6
+  font_thickness: 2
+  box_alpha: 0.3
+  text_alpha: 1.0
+  color_map: "coco"  # coco, random, class_based
+  save_format: "mp4"  # mp4, avi, images
+  fps: 30.0
+  quality: "high"  # low, medium, high
+
+# Benchmarking Configuration
+benchmark:
+  warmup_iterations: 10
+  benchmark_iterations: 100
+  measure_memory: true
+  measure_power: false
+  output_format: "json"  # json, csv, txt
+  detailed_profiling: false
+
+# System Configuration
+system:
+  num_workers: 4
+  prefetch_factor: 2
+  pin_memory: true
+  persistent_workers: true
+  max_memory_usage: "8GB"
+  enable_cuda: true
+  enable_tensorrt: false
+  enable_mixed_precision: true 
