@@ -1,5 +1,7 @@
 # MojoX: Real-Time Video Object Detection
 
+Presentation : https://github.com/alicanacar007/mojoSpace/blob/main/MojoSpace.pdf
+
 <div align="center">
 
 ![MojoX Logo](docs/assets/logo.png)
